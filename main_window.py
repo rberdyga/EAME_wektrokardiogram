@@ -1,19 +1,38 @@
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow, QScrollArea, QWidget, QListWidgetItem, QLabel
+import subprocess
 import sys
 
+from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QApplication, QMainWindow, QScrollArea, QWidget, QListWidgetItem, QLabel
+from PyQt5.QtWidgets import QVBoxLayout
 
-class Ui_MainWindow(QMainWindow):
+# kod jest poprawionym kodem z generatora QtDesigner
+# robione dla proby ale moze sie przydac
+
+def settingFont(size, bold=False, italic=False):
+    font = QtGui.QFont()
+    font.setFamily("Myriad Pro")
+    font.setPointSize(size)
+    font.setBold(bold)
+    font.setItalic(italic)
+    return font
+
+
+class MainWindow(QMainWindow):
     def __init__(self):
-        super(Ui_MainWindow, self).__init__()
+        super(MainWindow, self).__init__()
 
         self.centralwidget = QWidget(self)
+        self.mainLayout = QVBoxLayout(self.centralwidget)
 
         self.scrollArea = QScrollArea(self.centralwidget)
         self.scrollAreaWidgetContents = QWidget()
         self.listWidget = QtWidgets.QListWidget(self.scrollAreaWidgetContents)
 
         self.label = QLabel(self.centralwidget)
+
+        self.chooseButton = self.addButton("Wybierz plik", 12, 330, 420, 130, 50)
+        self.okButton = self.addButton("Zatwierdź", 14, 200, 630, 130, 50)
+        self.saveButton = self.addButton("Zapisz", 16, 700, 640, 130, 50)
 
         self.setupUi()
 
@@ -34,25 +53,19 @@ class Ui_MainWindow(QMainWindow):
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
 
         self.listWidget.setGeometry(QtCore.QRect(0, 0, 361, 161))
-
-        font = QtGui.QFont()
-        font.setFamily("Myriad Pro")
-        font.setPointSize(16)
-
-        self.listWidget.setFont(font)
+        self.listWidget.setFont(settingFont(16))
         self.listWidget.setMouseTracking(True)
         self.listWidget.setObjectName("listWidget")
 
         for x in range(0, 8):
-            self.listWidget.addItem(QListWidgetItem())
+            item = QListWidgetItem()
+            item.setText("pacjent00" + str(x + 1))
+            self.listWidget.addItem(item)
 
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
 
         self.label.setGeometry(QtCore.QRect(180, 20, 731, 131))
-        font = QtGui.QFont()
-        font.setFamily("Myriad Pro Light")
-        font.setPointSize(28)
-        self.label.setFont(font)
+        self.label.setFont(settingFont(28))
         self.label.setAcceptDrops(False)
         self.label.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.label.setAutoFillBackground(False)
@@ -60,125 +73,93 @@ class Ui_MainWindow(QMainWindow):
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setWordWrap(True)
         self.label.setObjectName("label")
+
         self.textEdit = QtWidgets.QTextEdit(self.centralwidget)
         self.textEdit.setGeometry(QtCore.QRect(100, 370, 361, 41))
-        font = QtGui.QFont()
-        font.setFamily("Myriad Pro Light")
-        font.setPointSize(12)
-        self.textEdit.setFont(font)
-        self.textEdit.setObjectName("textEdit")
-        self.pushButton = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton.setGeometry(QtCore.QRect(330, 420, 131, 51))
-        font = QtGui.QFont()
-        font.setFamily("Myriad Pro")
-        font.setPointSize(12)
-        font.setItalic(False)
-        self.pushButton.setFont(font)
-        self.pushButton.setObjectName("pushButton")
-        self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_2.setGeometry(QtCore.QRect(200, 630, 131, 51))
-        font = QtGui.QFont()
-        font.setFamily("Myriad Pro")
-        font.setPointSize(12)
-        font.setItalic(False)
-        self.pushButton_2.setFont(font)
-        self.pushButton_2.setObjectName("pushButton_2")
-        self.pushButton_3 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_3.setGeometry(QtCore.QRect(700, 640, 131, 51))
-        font = QtGui.QFont()
-        font.setFamily("Myriad Pro")
-        font.setPointSize(12)
-        font.setItalic(False)
-        self.pushButton_3.setFont(font)
-        self.pushButton_3.setObjectName("pushButton_3")
+        self.textEdit.setFont(settingFont(13))
+        self.textEdit.setText("Wprowadź scieżkę pliku wraz z jego nazwą")
+
         self.ekgView = QtWidgets.QGraphicsView(self.centralwidget)
         self.ekgView.setGeometry(QtCore.QRect(530, 180, 461, 161))
         self.ekgView.setObjectName("ekgView")
-        self.graphicsView = QtWidgets.QGraphicsView(self.centralwidget)
-        self.graphicsView.setGeometry(QtCore.QRect(530, 370, 461, 231))
-        self.graphicsView.setObjectName("graphicsView")
+
+        self.vectroView = QtWidgets.QGraphicsView(self.centralwidget)
+        self.vectroView.setGeometry(QtCore.QRect(530, 370, 461, 231))
+        self.vectroView.setObjectName("vectroView")
+
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
         self.label_2.setGeometry(QtCore.QRect(540, 190, 41, 21))
-        font = QtGui.QFont()
-        font.setFamily("Myriad Pro")
-        font.setPointSize(14)
-        font.setBold(True)
-        font.setWeight(75)
-        self.label_2.setFont(font)
+        self.label_2.setFont(settingFont(14, True))
         self.label_2.setObjectName("label_2")
+
         self.label_3 = QtWidgets.QLabel(self.centralwidget)
         self.label_3.setGeometry(QtCore.QRect(540, 380, 201, 21))
-        font = QtGui.QFont()
-        font.setFamily("Myriad Pro")
-        font.setPointSize(14)
-        font.setBold(True)
-        font.setWeight(75)
-        self.label_3.setFont(font)
+        self.label_3.setFont(settingFont(14, True))
         self.label_3.setObjectName("label_3")
+
         self.setCentralWidget(self.centralwidget)
+
         self.menubar = QtWidgets.QMenuBar(self)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1071, 21))
         self.menubar.setObjectName("menubar")
+
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
+
         self.menuAbout = QtWidgets.QMenu(self.menubar)
         self.menuAbout.setObjectName("menuAbout")
+
         self.setMenuBar(self.menubar)
+
         self.statusbar = QtWidgets.QStatusBar(self)
         self.statusbar.setObjectName("statusbar")
         self.setStatusBar(self.statusbar)
+
         self.actionRelease = QtWidgets.QAction(self)
         self.actionRelease.setObjectName("actionRelease")
+
         self.actionInfo = QtWidgets.QAction(self)
         self.actionInfo.setObjectName("actionInfo")
+
         self.actionRelease_2 = QtWidgets.QAction(self)
         self.actionRelease_2.setObjectName("actionRelease_2")
+
         self.actionAuthors = QtWidgets.QAction(self)
         self.actionAuthors.setObjectName("actionAuthors")
+
         self.actionAdd_patient = QtWidgets.QAction(self)
         self.actionAdd_patient.setShortcutContext(QtCore.Qt.ApplicationShortcut)
         self.actionAdd_patient.setObjectName("actionAdd_patient")
+
         self.menuFile.addAction(self.actionAdd_patient)
+
         self.menuAbout.addAction(self.actionInfo)
         self.menuAbout.addAction(self.actionRelease_2)
         self.menuAbout.addAction(self.actionAuthors)
+
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuAbout.menuAction())
 
         self.retranslateUi(self)
         QtCore.QMetaObject.connectSlotsByName(self)
 
+        # dodac wszystko do mainLayout
+        #
+        self.mainLayout.setAlignment(QtCore.Qt.AlignCenter)
+        self.setCentralWidget(self.centralwidget)
+
+        # otwarcie exploratora dla proby
+        self.actionAdd_patient.triggered.connect(lambda: subprocess.Popen('explorer'))
+
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Wektrokardiogram"))
         __sortingEnabled = self.listWidget.isSortingEnabled()
         self.listWidget.setSortingEnabled(False)
-        item = self.listWidget.item(0)
-        item.setText(_translate("MainWindow", "pacjent001"))
-        item = self.listWidget.item(1)
-        item.setText(_translate("MainWindow", "pacjent002"))
-        item = self.listWidget.item(2)
-        item.setText(_translate("MainWindow", "pacjent003"))
-        item = self.listWidget.item(3)
-        item.setText(_translate("MainWindow", "pacjent004"))
-        item = self.listWidget.item(4)
-        item.setText(_translate("MainWindow", "pacjent005"))
-        item = self.listWidget.item(5)
-        item.setText(_translate("MainWindow", "pacjent006"))
-        item = self.listWidget.item(6)
-        item.setText(_translate("MainWindow", "pacjent007"))
-        item = self.listWidget.item(7)
-        item.setText(_translate("MainWindow", "pacjent008"))
+
         self.listWidget.setSortingEnabled(__sortingEnabled)
         self.label.setText(_translate("MainWindow", "Oprogramowanie do wczytywania oraz prezentacji wektrokardiogramu"))
-        self.textEdit.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'Myriad Pro Light\'; font-size:12pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:30px; margin-bottom:0px; margin-left:10px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Myriad Pro\'; font-style:italic; color:#4b4b4b;\">Wprowadź scieżkę pliku wraz z jego nazwą</span></p></body></html>"))
-        self.pushButton.setText(_translate("MainWindow", "Wybierz plik"))
-        self.pushButton_2.setText(_translate("MainWindow", "Zatwierdź"))
-        self.pushButton_3.setText(_translate("MainWindow", "Zapisz"))
+
         self.label_2.setText(_translate("MainWindow", "EKG"))
         self.label_3.setText(_translate("MainWindow", "WEKTROKARDIOGRAM"))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
@@ -190,8 +171,19 @@ class Ui_MainWindow(QMainWindow):
         self.actionAdd_patient.setText(_translate("MainWindow", "Add patient"))
         self.actionAdd_patient.setShortcut(_translate("MainWindow", "Ctrl+N"))
 
+    def addButton(self, text, fontSize, xCoord, yCoord, width, heigh):
+        pushButton = QtWidgets.QPushButton(self.centralwidget)
+        pushButton.setGeometry(QtCore.QRect(xCoord, yCoord, width, heigh))
+        pushButton.setFont(settingFont(fontSize))
+        pushButton.setText(text)
+        return pushButton
 
-app = QApplication(sys.argv)
-ui = Ui_MainWindow()
-ui.show()
-sys.exit(app.exec())
+
+def run():
+    app = QApplication(sys.argv)
+    window = MainWindow()
+    window.show()
+    sys.exit(app.exec())
+
+
+run()
